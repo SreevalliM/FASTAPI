@@ -1,0 +1,21 @@
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.3
+pydantic[email]>=2.0.0
+requests>=2.31.0
+
+# Authentication & Security
+python-jose[cryptography]>=3.3.0  # JWT token handling
+passlib[bcrypt]>=1.7.4  # Password hashing
+python-multipart>=0.0.6  # Form data parsing for OAuth2
+
+# Database & ORM
+sqlmodel>=0.0.14
+alembic>=1.13.0
+
+# Database Drivers
+psycopg2-binary>=2.9.9  # PostgreSQL driver
+# OR use asyncpg for async support: asyncpg>=0.29.0
+
+# SQLAlchemy (included with sqlmodel, but explicit for clarity)
+sqlalchemy>=2.0.0

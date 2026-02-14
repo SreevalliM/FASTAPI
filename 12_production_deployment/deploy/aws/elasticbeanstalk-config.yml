@@ -1,0 +1,30 @@
+# AWS Elastic Beanstalk Configuration
+# Place this file in .ebextensions/01_fastapi.config
+
+option_settings:
+  aws:elasticbeanstalk:application:environment:
+    ENV: "production"
+    PYTHONPATH: "/var/app/current:$PYTHONPATH"
+    
+  aws:elasticbeanstalk:container:python:
+    WSGIPath: "12_production_api:app"
+    
+  aws:autoscaling:launchconfiguration:
+    InstanceType: t3.medium
+    
+  aws:autoscaling:asg:
+    MinSize: 2
+    MaxSize: 4
+    
+  aws:elasticbeanstalk:environment:
+    LoadBalancerType: application
+    ServiceRole: aws-elasticbeanstalk-service-role
+    
+  aws:elbv2:listener:443:
+    Protocol: HTTPS
+    SSLCertificateArns: arn:aws:acm:us-east-1:123456789:certificate/your-cert-id
+
+container_commands:
+  01_migrate:
+    command: "python -m alembic upgrade head"
+    leader_only: true

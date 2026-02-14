@@ -1,0 +1,52 @@
+# Render.com Blueprint Configuration
+# Create this file as render.yaml in your repository root
+
+services:
+  # FastAPI Web Service
+  - type: web
+    name: fastapi-app
+    env: python
+    region: oregon
+    plan: starter
+    branch: main
+    buildCommand: "pip install -r 12_production_deployment/requirements.txt"
+    startCommand: "cd 12_production_deployment && uvicorn 12_production_api:app --host 0.0.0.0 --port $PORT --workers 4"
+    healthCheckPath: /health
+    envVars:
+      - key: ENV
+        value: production
+      - key: LOG_LEVEL
+        value: INFO
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: fastapi-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: redis
+          type: redis
+          property: connectionString
+      - key: API_KEY
+        generateValue: true
+      - key: SECRET_KEY
+        generateValue: true
+    autoDeploy: true
+
+  # Redis Cache
+  - type: redis
+    name: redis
+    region: oregon
+    plan: starter
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []
+
+databases:
+  # PostgreSQL Database
+  - name: fastapi-db
+    region: oregon
+    plan: starter
+    databaseName: fastapi_db
+    user: fastapi_user
+    ipAllowList: []
